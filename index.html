@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+	<meta charset="utf-8">
+	<title>ToDo App</title>
+	<meta name="author" content="Dominik Adam"/>
+	<meta http-equiv="X-Ua-Compatible" content="IE=edge,chrome=1"/>
+	
+	<link rel="stylesheet" href="style.css"/>
+	<link rel="stylesheet" href="css/fontello.css"/>
+	<script src="https://unpkg.com/vue@3.1.1/dist/vue.global.prod.js"></script>
+</head>
+<body>
+	
+	<div id="app">
+	
+		<div id="header"><h1>ToDo App</h1></div>
+		
+		<div id="container" @click="storeData">
+			<i class="icon-plus-outline" @click="generateNewTodo"></i>
+			
+			<div class="todoElementDiv" v-for="todoElement in todoElements" v-bind:key="todoElement.id">
+				<i class="icon-trash" @click="removeTodoElement(todoElement.id)"></i>
+				
+				<input class="inputText" v-model="todoElement.title" v-bind:class="{state1: todoElement.state == 1, state2: todoElement.state == 2}"/>
+				
+				<div v-if="todoElement.state == 0" class="state" @click="todoElement.state = 1">To Do</div>
+				<div v-if="todoElement.state == 1" class="state" @click="todoElement.state = 2">Doing</div>
+				<div v-if="todoElement.state == 2" class="state" @click="todoElement.state = 0">Done</div>
+			</div>
+		</div>
+	</div>
+  
+	<script>
+		const { createApp } = Vue;
+
+		createApp({
+			data() {
+				return {
+					todoElements: JSON.parse(localStorage.getItem("elements") || "[]")
+				}
+			},
+			methods: {
+				generateNewTodo() {
+					this.todoElements.push({ 
+						title: "Default", 
+						state: 0, 
+						id: Math.random()
+					})
+				},
+				removeTodoElement(id) {
+					const index = this.todoElements.findIndex(el => el.id === id);
+					this.todoElements.splice(index, 1);
+				},
+				storeData() {
+					localStorage.setItem("elements", JSON.stringify(this.todoElements));
+				}
+			}
+		}).mount('#app')
+	</script>
+
+</body>
+</html>
